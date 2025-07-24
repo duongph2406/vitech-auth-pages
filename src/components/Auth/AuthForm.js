@@ -201,7 +201,7 @@ function AuthForm({
                     onClick={togglePasswordVisibility}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? '🙉' : '👀'}
+                    {showPassword ? '👁️' : '🔒'}
                   </button>
                 </div>
               </div>
@@ -228,7 +228,7 @@ function AuthForm({
                       onClick={toggleConfirmPasswordVisibility}
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
-                      {showConfirmPassword ? '🙉' : '👀'}
+                      {showConfirmPassword ? '👁️' : '🔒'}
                     </button>
                   </div>
                 </div>
