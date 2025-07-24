@@ -31,6 +31,7 @@
   background: white;
   padding: 2px 12px;
   border-radius: 6px;
+  margin-top: 50px;
 }
 
 .user-menu {
@@ -188,7 +189,9 @@
 }
 
 /* Buttons */
-.edit-btn, .add-btn, .action-btn {
+.edit-btn,
+.add-btn,
+.action-btn {
   background: #003865;
   color: white;
   border: none;
@@ -199,11 +202,14 @@
   transition: background-color 0.2s;
 }
 
-.edit-btn:hover, .add-btn:hover, .action-btn:hover {
+.edit-btn:hover,
+.add-btn:hover,
+.action-btn:hover {
   background: #004a7c;
 }
 
-.edit-btn.small, .delete-btn.small {
+.edit-btn.small,
+.delete-btn.small {
   padding: 6px 12px;
   font-size: 12px;
 }
@@ -366,13 +372,15 @@
 }
 
 /* Address & Payment Cards */
-.addresses-list, .payments-list {
+.addresses-list,
+.payments-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.address-card, .payment-card {
+.address-card,
+.payment-card {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -382,18 +390,21 @@
   transition: box-shadow 0.2s;
 }
 
-.address-card:hover, .payment-card:hover {
+.address-card:hover,
+.payment-card:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.address-header, .payment-header {
+.address-header,
+.payment-header {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
 
-.address-type, .card-type {
+.address-type,
+.card-type {
   font-weight: 500;
   color: #1f2937;
 }
@@ -413,13 +424,15 @@
   line-height: 1.5;
 }
 
-.card-number, .card-expiry {
+.card-number,
+.card-expiry {
   color: #6b7280;
   font-size: 14px;
   margin: 4px 0;
 }
 
-.address-actions, .payment-actions {
+.address-actions,
+.payment-actions {
   display: flex;
   gap: 8px;
 }
@@ -507,7 +520,7 @@
   padding: 8px 14px;
   font-size: 13px;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   background: #22c55e;
   color: #fff;
   white-space: nowrap;
@@ -527,47 +540,49 @@
     flex-direction: column;
     padding: 16px;
   }
-  
+
   .account-sidebar {
     width: 100%;
   }
-  
+
   .sidebar-nav {
     flex-direction: row;
     overflow-x: auto;
   }
-  
+
   .nav-item {
     white-space: nowrap;
     border-right: none;
     border-bottom: 3px solid transparent;
   }
-  
+
   .nav-item.active {
     border-right: none;
     border-bottom: 3px solid #003865;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  
-  .address-card, .payment-card {
+
+  .address-card,
+  .payment-card {
     flex-direction: column;
     gap: 16px;
   }
-  
-  .address-actions, .payment-actions {
+
+  .address-actions,
+  .payment-actions {
     align-self: flex-end;
   }
 }
