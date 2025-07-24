@@ -3,6 +3,7 @@ import './AccountProfile.css';
 import { Modal } from '../Modal';
 import authService from '../../services/authService';
 import dataService from '../../services/dataService';
+import { usePageTitle, PAGE_TITLES } from '../../hooks/usePageTitle';
 
 function AccountProfile({ onLogout }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -11,6 +12,9 @@ function AccountProfile({ onLogout }) {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Thiết lập tiêu đề trang động
+  usePageTitle(PAGE_TITLES.PROFILE);
 
   // User data from localStorage
   const [userInfo, setUserInfo] = useState({

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './AuthForm.css';
 import namImage from '../../assets/ceo-avatar.jpg';
+import { usePageTitle, PAGE_TITLES } from '../../hooks/usePageTitle';
 
 function AuthForm({ 
   mode, // 'signin' or 'signup'
@@ -16,6 +17,9 @@ function AuthForm({
   const [rememberMe, setRememberMe] = useState(false);
 
   const isSignUp = mode === 'signup';
+  
+  // Thiết lập tiêu đề trang động
+  usePageTitle(isSignUp ? PAGE_TITLES.SIGNUP : PAGE_TITLES.LOGIN);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

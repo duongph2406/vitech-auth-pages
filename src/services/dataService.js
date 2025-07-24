@@ -220,4 +220,5 @@ class DataService {
   }
 }
 
-export default new DataService();
+const dataService = new DataService();
+export default dataService;
