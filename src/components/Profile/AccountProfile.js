@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AccountProfile.css';
+import { Modal } from '../Modal';
 import authService from '../../services/authService';
 import dataService from '../../services/dataService';
 
@@ -442,58 +443,50 @@ function AccountProfile({ onLogout }) {
               </div>
 
               {/* Password Change Modal */}
-              {showPasswordForm && (
-                <div className="modal-overlay">
-                  <div className="modal">
-                    <div className="modal-header">
-                      <h3>Thay đổi mật khẩu</h3>
-                      <button 
-                        onClick={() => setShowPasswordForm(false)}
-                        className="close-btn"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <form onSubmit={handlePasswordChange}>
-                      <div className="form-group">
-                        <label>Mật khẩu hiện tại</label>
-                        <input
-                          type="password"
-                          name="currentPassword"
-                          required
-                          className="form-input"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Mật khẩu mới</label>
-                        <input
-                          type="password"
-                          name="newPassword"
-                          required
-                          className="form-input"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Xác nhận mật khẩu mới</label>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          required
-                          className="form-input"
-                        />
-                      </div>
-                      <div className="modal-actions">
-                        <button type="button" onClick={() => setShowPasswordForm(false)} className="cancel-btn">
-                          Hủy
-                        </button>
-                        <button type="submit" className="save-btn">
-                          Cập nhật
-                        </button>
-                      </div>
-                    </form>
+              <Modal
+                isOpen={showPasswordForm}
+                onClose={() => setShowPasswordForm(false)}
+                title="Thay đổi mật khẩu"
+                size="small"
+              >
+                <form onSubmit={handlePasswordChange}>
+                  <div className="form-group">
+                    <label>Mật khẩu hiện tại</label>
+                    <input
+                      type="password"
+                      name="currentPassword"
+                      required
+                      className="form-input"
+                    />
                   </div>
-                </div>
-              )}
+                  <div className="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Xác nhận mật khẩu mới</label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      required
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" onClick={() => setShowPasswordForm(false)} className="cancel-btn">
+                      Hủy
+                    </button>
+                    <button type="submit" className="save-btn">
+                      Cập nhật
+                    </button>
+                  </div>
+                </form>
+              </Modal>
             </div>
           )}
 

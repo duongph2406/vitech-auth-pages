@@ -1,0 +1,45 @@
+.form-field {
+  margin-bottom: 24px;
+}
+
+.form-field.half {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.required-indicator {
+  color: #dc2626;
+  margin-left: 4px;
+}
+
+.form-input-wrapper {
+  position: relative;
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #dc2626;
+}
+
+.error-icon {
+  font-size: 14px;
+}
+
+.form-field.has-error .form-input-wrapper input,
+.form-field.has-error .form-input-wrapper select,
+.form-field.has-error .form-input-wrapper textarea {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}

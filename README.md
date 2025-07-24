@@ -24,14 +24,42 @@ src/
 │   │   ├── AccountProfile.js
 │   │   ├── AccountProfile.css
 │   │   └── index.js
+│   ├── Layout/          # Layout components
+│   │   ├── AppLayout.js
+│   │   ├── AppLayout.css
+│   │   └── index.js
+│   ├── UI/              # Reusable UI components
+│   │   ├── Button.js
+│   │   ├── LoadingSpinner.js
+│   │   └── index.js
+│   ├── ErrorBoundary/   # Error handling
+│   │   ├── ErrorBoundary.js
+│   │   ├── ErrorBoundary.css
+│   │   └── index.js
 │   └── index.js         # Component exports
+├── hooks/               # Custom React hooks
+│   ├── useApp.js        # Main app logic
+│   ├── useAuth.js       # Authentication hooks
+│   ├── useForm.js       # Form management
+│   └── index.js
 ├── services/            # Business logic services
 │   ├── authService.js   # Authentication logic
-│   └── dataService.js   # Data management
+│   ├── dataService.js   # Data management
+│   ├── performanceService.js # Performance monitoring
+│   ├── notificationService.js # Notifications
+│   └── index.js
 ├── utils/               # Utility functions
-│   └── clearAdminData.js
+│   ├── validation.js    # Form validation
+│   ├── performance.js   # Performance utilities
+│   ├── clearAdminData.js
+│   └── index.js
+├── config/              # Configuration
+│   ├── environment.js   # Environment settings
+│   └── index.js
 ├── constants/           # Application constants
 │   └── index.js
+├── context/             # React context
+│   └── AppContext.js
 ├── styles/              # Global styles
 │   ├── App.css
 │   └── index.css
