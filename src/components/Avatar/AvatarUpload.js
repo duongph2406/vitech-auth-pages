@@ -100,23 +100,27 @@ const AvatarUpload = ({ currentAvatar, onAvatarChange, disabled = false, userInf
         {currentAvatar ? (
           <div className="avatar-preview">
             <img src={currentAvatar} alt="Avatar preview" />
-            <div className="avatar-overlay">
-              <div className="avatar-overlay-content">
-                <span className="camera-icon">📷</span>
-                <span className="upload-text">Thay đổi ảnh</span>
+            {!disabled && (
+              <div className="avatar-overlay">
+                <div className="avatar-overlay-content">
+                  <span className="camera-icon">📷</span>
+                  <span className="upload-text">Thay đổi ảnh</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         ) : (
           <div className="avatar-placeholder">
             <div className="avatar-initials-circle">
               <span className="avatar-initials">{getInitials()}</span>
             </div>
-            <div className="avatar-placeholder-content">
-              <span className="camera-icon">📷</span>
-              <span className="upload-text">Tải lên ảnh đại diện</span>
-              <span className="upload-hint">Kéo thả hoặc click để chọn</span>
-            </div>
+            {!disabled && (
+              <div className="avatar-placeholder-content">
+                <span className="camera-icon">📷</span>
+                <span className="upload-text">Tải lên ảnh đại diện</span>
+                <span className="upload-hint">Kéo thả hoặc click để chọn</span>
+              </div>
+            )}
           </div>
         )}
 
