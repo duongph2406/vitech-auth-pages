@@ -85,12 +85,25 @@ export const validatePhone = (phone) => {
   try {
     if (!phone) return ''; // Phone is optional
     
-    if (!PHONE.PATTERN.test(phone)) {
-      return 'Vui lòng nhập số điện thoại hợp lệ';
+    // Remove all non-digit characters for validation
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    if (cleanPhone.length !== PHONE.LENGTH) {
+      return `Số điện thoại phải có đúng ${PHONE.LENGTH} số`;
     }
-    if (phone.length < 10 || phone.length > 15) {
-      return 'Số điện thoại phải có từ 10-15 ký tự';
+    
+    if (!PHONE.PATTERN.test(cleanPhone)) {
+      return 'Số điện thoại chỉ được chứa các chữ số từ 0-9';
     }
+    
+    // Check if starts with valid Vietnamese phone prefixes
+    const validPrefixes = ['03', '05', '07', '08', '09'];
+    const prefix = cleanPhone.substring(0, 2);
+    
+    if (!validPrefixes.includes(prefix)) {
+      return 'Số điện thoại phải bắt đầu bằng 03, 05, 07, 08 hoặc 09';
+    }
+    
     return '';
   } catch (error) {
     throw errorHandler.createValidationError('Lỗi xác thực số điện thoại');

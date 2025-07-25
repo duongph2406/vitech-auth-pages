@@ -4,6 +4,8 @@ import { Modal } from '../Modal';
 import authService from '../../services/authService';
 import dataService from '../../services/dataService';
 import { usePageTitle, PAGE_TITLES } from '../../hooks/usePageTitle';
+import { formatPhoneNumber, cleanPhoneNumber } from '../../utils/formatters';
+import { validatePhone } from '../../utils/validation';
 
 function AccountProfile({ onLogout }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -15,6 +17,8 @@ function AccountProfile({ onLogout }) {
 
   // Thiết lập tiêu đề trang động
   usePageTitle(PAGE_TITLES.PROFILE);
+  
+  const [phoneError, setPhoneError] = useState('');
 
   // User data from localStorage
   const [userInfo, setUserInfo] = useState({
@@ -46,7 +50,7 @@ function AccountProfile({ onLogout }) {
         lastName: currentUser.lastName,
         email: currentUser.email,
         username: currentUser.username,
-        phone: currentUser.phone || '',
+        phone: currentUser.phone ? formatPhoneNumber(currentUser.phone) : '',
         avatar: currentUser.avatar
       });
       setAddresses(currentUser.addresses || []);
@@ -61,9 +65,28 @@ function AccountProfile({ onLogout }) {
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
-    const result = authService.updateProfile(userInfo);
+    
+    // Validate phone number if provided
+    if (userInfo.phone) {
+      const cleanPhone = cleanPhoneNumber(userInfo.phone);
+      const phoneValidationError = validatePhone(cleanPhone);
+      if (phoneValidationError) {
+        setPhoneError(phoneValidationError);
+        showMessage('error', phoneValidationError);
+        return;
+      }
+    }
+    
+    // Clean phone number before saving
+    const profileData = {
+      ...userInfo,
+      phone: userInfo.phone ? cleanPhoneNumber(userInfo.phone) : ''
+    };
+    
+    const result = authService.updateProfile(profileData);
     if (result.success) {
       setIsEditing(false);
+      setPhoneError('');
       showMessage('success', 'Cập nhật thông tin thành công!');
       loadUserData(); // Reload data
     } else {
@@ -406,10 +429,32 @@ function AccountProfile({ onLogout }) {
                     <input
                       type="tel"
                       value={userInfo.phone}
-                      onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Only allow digits and limit to 10 characters
+                        const cleanValue = value.replace(/\D/g, '').slice(0, 10);
+                        const formattedValue = formatPhoneNumber(cleanValue);
+                        
+                        setUserInfo({...userInfo, phone: formattedValue});
+                        
+                        // Validate phone number
+                        if (cleanValue) {
+                          const error = validatePhone(cleanValue);
+                          setPhoneError(error);
+                        } else {
+                          setPhoneError('');
+                        }
+                      }}
                       disabled={!isEditing}
-                      className="form-input"
+                      className={`form-input ${phoneError ? 'error' : ''}`}
+                      placeholder="0123 456 789"
+                      maxLength="12" // XXX XXX XXXX format
                     />
+                    {phoneError && (
+                      <span className="error-text" style={{color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block'}}>
+                        {phoneError}
+                      </span>
+                    )}
                   </div>
                 </div>
 
