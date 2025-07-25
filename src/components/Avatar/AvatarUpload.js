@@ -5,9 +5,21 @@
 import { useState, useRef } from 'react';
 import './AvatarUpload.css';
 
-const AvatarUpload = ({ currentAvatar, onAvatarChange, disabled = false }) => {
+const AvatarUpload = ({ currentAvatar, onAvatarChange, disabled = false, userInfo = {} }) => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Generate initials from user name
+  const getInitials = () => {
+    if (userInfo.firstName && userInfo.lastName) {
+      return (userInfo.firstName[0] + userInfo.lastName[0]).toUpperCase();
+    } else if (userInfo.firstName) {
+      return userInfo.firstName[0].toUpperCase();
+    } else if (userInfo.lastName) {
+      return userInfo.lastName[0].toUpperCase();
+    }
+    return 'U'; // Default fallback
+  };
 
   // Handle file selection
   const handleFileSelect = (file) => {
@@ -97,6 +109,9 @@ const AvatarUpload = ({ currentAvatar, onAvatarChange, disabled = false }) => {
           </div>
         ) : (
           <div className="avatar-placeholder">
+            <div className="avatar-initials-circle">
+              <span className="avatar-initials">{getInitials()}</span>
+            </div>
             <div className="avatar-placeholder-content">
               <span className="camera-icon">📷</span>
               <span className="upload-text">Tải lên ảnh đại diện</span>

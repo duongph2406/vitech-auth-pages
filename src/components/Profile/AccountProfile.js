@@ -24,6 +24,18 @@ function AccountProfile({ onLogout }) {
   const [avatarData, setAvatarData] = useState(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
+  // Helper function to generate initials
+  const getInitials = (firstName = '', lastName = '') => {
+    if (firstName && lastName) {
+      return (firstName[0] + lastName[0]).toUpperCase();
+    } else if (firstName) {
+      return firstName[0].toUpperCase();
+    } else if (lastName) {
+      return lastName[0].toUpperCase();
+    }
+    return 'U'; // Default fallback
+  };
+
   // User data from localStorage
   const [userInfo, setUserInfo] = useState({
     firstName: '',
@@ -80,6 +92,7 @@ function AccountProfile({ onLogout }) {
       const validation = validateImageFile(avatarInfo.file);
       if (!validation.isValid) {
         showMessage('error', validation.errors.join(', '));
+        setIsUploadingAvatar(false);
         return;
       }
 
@@ -357,7 +370,7 @@ function AccountProfile({ onLogout }) {
                 <img src={userInfo.avatar} alt="User" />
               ) : (
                 <div className="avatar-placeholder">
-                  {userInfo.firstName[0]}{userInfo.lastName[0]}
+                  {getInitials(userInfo.firstName, userInfo.lastName)}
                 </div>
               )}
             </div>
@@ -455,6 +468,7 @@ function AccountProfile({ onLogout }) {
                     currentAvatar={avatarData?.preview || userInfo.avatar}
                     onAvatarChange={handleAvatarChange}
                     disabled={!isEditing || isUploadingAvatar}
+                    userInfo={userInfo}
                   />
 
                   {isEditing && avatarData && (
