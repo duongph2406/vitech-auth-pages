@@ -1,7 +1,7 @@
 import dataService from './dataService';
-import { validateEmail, validatePassword, validateUsername } from '../utils/validation';
-import { errorHandler } from '../utils/errorHandler';
-import { MESSAGES } from '../constants';
+import { validateEmail, validatePassword, validateUsername } from '../lib/validation';
+import errorHandler from '../lib/errorHandler';
+import { MESSAGES } from '../lib/constants';
 
 class AuthService {
   // Login user

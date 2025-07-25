@@ -1,5 +1,6 @@
-import { VALIDATION_RULES, MESSAGES } from '../constants';
-import { errorHandler } from './errorHandler';
+// Legacy validation file - use src/lib/validation.js for new code
+import { VALIDATION_RULES, MESSAGES } from '../lib/constants';
+import errorHandler from '../lib/errorHandler';
 
 // Validation patterns from constants
 const { EMAIL, PASSWORD, USERNAME, PHONE } = VALIDATION_RULES;

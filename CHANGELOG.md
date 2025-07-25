@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2025-01-25
+
+### 🚀 Complete Architecture Refactor
+
+#### Major Changes
+- **New Library Structure**: Moved core functionality to `src/lib/` for better organization
+- **Enhanced Error Handling**: Comprehensive error system with custom error types
+- **Advanced Validation**: Complete validation system with custom validators
+- **Storage System**: Enhanced localStorage wrapper with encryption and caching
+- **API Client**: Production-ready API client with retry logic and interceptors
+- **Performance Monitoring**: Advanced performance tracking with detailed metrics
+
+#### New Features
+- **Avatar Upload System**: Complete avatar management with image processing
+- **Enhanced Hooks**: `useAsync`, `useForm` with advanced features
+- **Type Safety**: Better type definitions and validation
+- **Caching System**: Built-in caching for API requests and storage
+- **Error Boundaries**: Comprehensive error handling throughout the app
+
 ## [2.0.0] - 2025-01-25
 
 ### 🎉 Major Refactor Release

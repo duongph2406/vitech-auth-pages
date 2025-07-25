@@ -1,4 +1,5 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS } from '../lib/constants';
+import storage from '../lib/storage';
 
 // Local Storage Data Service
 class DataService {

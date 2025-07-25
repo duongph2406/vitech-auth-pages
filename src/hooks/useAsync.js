@@ -1,49 +1,137 @@
 /**
- * Custom hook for handling async operations
+ * Enhanced async hook with better error handling and caching
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { errorHandler } from '../utils/errorHandler';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import errorHandler from '../lib/errorHandler';
 
-export const useAsync = (asyncFunction, immediate = true) => {
-  const [status, setStatus] = useState('idle');
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+export const useAsync = (asyncFunction, dependencies = [], options = {}) => {
+  const {
+    immediate = true,
+    onSuccess = null,
+    onError = null,
+    retryAttempts = 0,
+    retryDelay = 1000,
+    cache = false,
+    cacheKey = null
+  } = options;
 
-  // The execute function wraps asyncFunction and handles setting state for pending, resolved, and rejected promises
+  const [state, setState] = useState({
+    data: null,
+    error: null,
+    loading: false,
+    lastExecuted: null
+  });
+
+  const mountedRef = useRef(true);
+  const cacheRef = useRef(new Map());
+  const retryCountRef = useRef(0);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   const execute = useCallback(async (...args) => {
-    setStatus('pending');
-    setData(null);
-    setError(null);
+    if (!mountedRef.current) return;
+
+    // Check cache
+    const key = cacheKey || JSON.stringify(args);
+    if (cache && cacheRef.current.has(key)) {
+      const cached = cacheRef.current.get(key);
+      setState(prev => ({ ...prev, data: cached, loading: false }));
+      return cached;
+    }
+
+    setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await asyncFunction(...args);
-      setData(response);
-      setStatus('resolved');
-      return response;
-    } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      setError(handledError);
-      setStatus('rejected');
-      throw handledError;
-    }
-  }, [asyncFunction]);
+      const result = await asyncFunction(...args);
+      
+      if (!mountedRef.current) return;
 
-  // Call execute if we want to fire it right away
+      // Cache result
+      if (cache) {
+        cacheRef.current.set(key, result);
+      }
+
+      setState({
+        data: result,
+        error: null,
+        loading: false,
+        lastExecuted: Date.now()
+      });
+
+      retryCountRef.current = 0;
+      
+      if (onSuccess) {
+        onSuccess(result);
+      }
+
+      return result;
+    } catch (error) {
+      if (!mountedRef.current) return;
+
+      const processedError = errorHandler.handleError(error);
+
+      // Retry logic
+      if (retryCountRef.current < retryAttempts) {
+        retryCountRef.current++;
+        setTimeout(() => {
+          if (mountedRef.current) {
+            execute(...args);
+          }
+        }, retryDelay * retryCountRef.current);
+        return;
+      }
+
+      setState({
+        data: null,
+        error: processedError,
+        loading: false,
+        lastExecuted: Date.now()
+      });
+
+      if (onError) {
+        onError(processedError);
+      }
+
+      throw processedError;
+    }
+  }, [asyncFunction, onSuccess, onError, retryAttempts, retryDelay, cache, cacheKey]);
+
+  // Auto-execute on mount or dependency change
   useEffect(() => {
     if (immediate) {
       execute();
     }
-  }, [execute, immediate]);
+  }, [immediate, execute, ...dependencies]);
+
+  const reset = useCallback(() => {
+    setState({
+      data: null,
+      error: null,
+      loading: false,
+      lastExecuted: null
+    });
+    retryCountRef.current = 0;
+  }, []);
+
+  const clearCache = useCallback(() => {
+    cacheRef.current.clear();
+  }, []);
 
   return {
+    ...state,
     execute,
-    status,
-    data,
-    error,
-    isIdle: status === 'idle',
-    isPending: status === 'pending',
-    isResolved: status === 'resolved',
-    isRejected: status === 'rejected'
+    reset,
+    clearCache,
+    isIdle: !state.loading && !state.data && !state.error,
+    isLoading: state.loading,
+    isSuccess: !state.loading && state.data && !state.error,
+    isError: !state.loading && state.error,
+    retryCount: retryCountRef.current
   };
 };
