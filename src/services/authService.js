@@ -141,6 +141,76 @@ class AuthService {
     return { success: true, user: updatedUser };
   }
 
+  // Avatar management
+  updateAvatar(avatarData) {
+    try {
+      const user = dataService.getCurrentUser();
+      if (!user) {
+        return { success: false, message: 'Người dùng chưa đăng nhập' };
+      }
+
+      const updatedUser = dataService.updateUserAvatar(user.id, avatarData);
+      if (updatedUser) {
+        return { success: true, user: updatedUser };
+      } else {
+        return { success: false, message: 'Không thể cập nhật avatar' };
+      }
+    } catch (error) {
+      const handledError = errorHandler.handleError(error);
+      return { success: false, message: handledError.message };
+    }
+  }
+
+  removeAvatar() {
+    try {
+      const user = dataService.getCurrentUser();
+      if (!user) {
+        return { success: false, message: 'Người dùng chưa đăng nhập' };
+      }
+
+      const updatedUser = dataService.removeUserAvatar(user.id);
+      if (updatedUser) {
+        return { success: true, user: updatedUser };
+      } else {
+        return { success: false, message: 'Không thể xóa avatar' };
+      }
+    } catch (error) {
+      const handledError = errorHandler.handleError(error);
+      return { success: false, message: handledError.message };
+    }
+  }
+
+  // Avatar management
+  updateAvatar(avatarDataUrl) {
+    try {
+      const user = dataService.getCurrentUser();
+      if (!user) {
+        return { success: false, message: 'Người dùng chưa đăng nhập' };
+      }
+
+      const updatedUser = dataService.updateUser(user.id, { avatar: avatarDataUrl });
+      return { success: true, user: updatedUser };
+    } catch (error) {
+      const handledError = errorHandler.handleError(error);
+      return { success: false, message: handledError.message };
+    }
+  }
+
+  removeAvatar() {
+    try {
+      const user = dataService.getCurrentUser();
+      if (!user) {
+        return { success: false, message: 'Người dùng chưa đăng nhập' };
+      }
+
+      const updatedUser = dataService.updateUser(user.id, { avatar: null });
+      return { success: true, user: updatedUser };
+    } catch (error) {
+      const handledError = errorHandler.handleError(error);
+      return { success: false, message: handledError.message };
+    }
+  }
+
   // Validation methods (delegated to validation utils)
   validatePassword(password) {
     return !validatePassword(password);

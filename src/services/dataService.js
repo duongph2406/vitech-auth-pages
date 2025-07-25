@@ -61,6 +61,38 @@ class DataService {
     if (userIndex !== -1) {
       users[userIndex] = { ...users[userIndex], ...userData };
       localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+      
+      // Update current user session if it's the same user
+      const currentUser = this.getCurrentUser();
+      if (currentUser && currentUser.id === userId) {
+        this.setCurrentUser(userId);
+      }
+      
+      return users[userIndex];
+    }
+    return null;
+  }
+
+  // Avatar Management
+  updateUserAvatar(userId, avatarData) {
+    const users = this.getAllUsers();
+    const userIndex = users.findIndex(user => user.id === userId);
+    if (userIndex !== -1) {
+      users[userIndex].avatar = avatarData;
+      users[userIndex].updatedAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+      return users[userIndex];
+    }
+    return null;
+  }
+
+  removeUserAvatar(userId) {
+    const users = this.getAllUsers();
+    const userIndex = users.findIndex(user => user.id === userId);
+    if (userIndex !== -1) {
+      delete users[userIndex].avatar;
+      users[userIndex].updatedAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
       return users[userIndex];
     }
     return null;

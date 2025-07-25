@@ -6,3 +6,4 @@ export * from './UI';
 export * from './Form';
 export * from './Modal';
 export * from './Notification';
+export * from './Avatar';

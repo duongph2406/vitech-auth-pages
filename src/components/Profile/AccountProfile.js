@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import './AccountProfile.css';
 import { Modal } from '../Modal';
+import { AvatarUpload } from '../Avatar';
 import authService from '../../services/authService';
 import dataService from '../../services/dataService';
 import { usePageTitle, PAGE_TITLES } from '../../hooks/usePageTitle';
 import { formatPhoneNumber, cleanPhoneNumber } from '../../utils/formatters';
 import { validatePhone } from '../../utils/validation';
+import { compressImage, resizeToSquare, validateImageFile } from '../../utils/imageUtils';
 
 function AccountProfile({ onLogout }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -17,8 +19,10 @@ function AccountProfile({ onLogout }) {
 
   // Thiết lập tiêu đề trang động
   usePageTitle(PAGE_TITLES.PROFILE);
-  
+
   const [phoneError, setPhoneError] = useState('');
+  const [avatarData, setAvatarData] = useState(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // User data from localStorage
   const [userInfo, setUserInfo] = useState({
@@ -63,9 +67,89 @@ function AccountProfile({ onLogout }) {
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
   };
 
+  // Avatar handlers
+  const handleAvatarChange = async (avatarInfo) => {
+    if (!avatarInfo) {
+      setAvatarData(null);
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      // Validate image file
+      const validation = validateImageFile(avatarInfo.file);
+      if (!validation.isValid) {
+        showMessage('error', validation.errors.join(', '));
+        return;
+      }
+
+      // Process image: resize to square and compress
+      let processedFile = avatarInfo.file;
+
+      // First resize to square for avatar
+      processedFile = await resizeToSquare(processedFile, 400);
+
+      // Then compress if still too large
+      if (processedFile.size > 500 * 1024) { // If larger than 500KB
+        processedFile = await compressImage(processedFile, 400, 0.8);
+      }
+
+      setAvatarData({
+        file: processedFile,
+        preview: avatarInfo.preview,
+        name: avatarInfo.name,
+        size: processedFile.size,
+        originalSize: avatarInfo.file.size
+      });
+    } catch (error) {
+      console.error('Avatar processing error:', error);
+      showMessage('error', 'Không thể xử lý ảnh. Vui lòng thử lại.');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleSaveAvatar = async () => {
+    if (!avatarData) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      const result = authService.updateAvatar(avatarData.preview);
+      if (result.success) {
+        showMessage('success', 'Cập nhật ảnh đại diện thành công!');
+        loadUserData();
+        setAvatarData(null);
+      } else {
+        showMessage('error', result.message);
+      }
+    } catch (error) {
+      showMessage('error', 'Có lỗi xảy ra khi lưu ảnh đại diện');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    setIsUploadingAvatar(true);
+    try {
+      const result = authService.removeAvatar();
+      if (result.success) {
+        showMessage('success', 'Xóa ảnh đại diện thành công!');
+        loadUserData();
+        setAvatarData(null);
+      } else {
+        showMessage('error', result.message);
+      }
+    } catch (error) {
+      showMessage('error', 'Có lỗi xảy ra khi xóa ảnh đại diện');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   const handleSaveProfile = (e) => {
     e.preventDefault();
-    
+
     // Validate phone number if provided
     if (userInfo.phone) {
       const cleanPhone = cleanPhoneNumber(userInfo.phone);
@@ -76,13 +160,13 @@ function AccountProfile({ onLogout }) {
         return;
       }
     }
-    
+
     // Clean phone number before saving
     const profileData = {
       ...userInfo,
       phone: userInfo.phone ? cleanPhoneNumber(userInfo.phone) : ''
     };
-    
+
     const result = authService.updateProfile(profileData);
     if (result.success) {
       setIsEditing(false);
@@ -289,25 +373,25 @@ function AccountProfile({ onLogout }) {
         {message.text && (
           <div
             className="modal-overlay"
-            style={{zIndex: 2000}}
+            style={{ zIndex: 2000 }}
             onClick={() => setMessage({ type: '', text: '' })}
           >
             <div
               className={`modal message-modal ${message.type === 'error' ? 'error-message' : 'success-message'}`}
-              style={{textAlign: 'center'}}
+              style={{ textAlign: 'center' }}
               onClick={e => e.stopPropagation()}
             >
-              <div style={{display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center'}}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
                 {message.type === 'success' && (
-                  <span style={{fontSize: 18, display: 'flex', alignItems: 'center'}}>
+                  <span style={{ fontSize: 18, display: 'flex', alignItems: 'center' }}>
                     {/* Tick icon SVG */}
-                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M6 10.5L9 13.5L14 8.5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#fff" /><path d="M6 10.5L9 13.5L14 8.5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>
                 )}
                 {message.type === 'error' && (
-                  <span style={{fontSize: 18, display: 'flex', alignItems: 'center'}}>
+                  <span style={{ fontSize: 18, display: 'flex', alignItems: 'center' }}>
                     {/* X icon SVG */}
-                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M7 7L13 13M13 7L7 13" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="#fff" /><path d="M7 7L13 13M13 7L7 13" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" /></svg>
                   </span>
                 )}
                 <span>{message.text}</span>
@@ -319,28 +403,28 @@ function AccountProfile({ onLogout }) {
         {/* Sidebar */}
         <div className="account-sidebar">
           <nav className="sidebar-nav">
-            <button 
+            <button
               className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
               <span className="nav-icon">👤</span>
               Thông tin cá nhân
             </button>
-            <button 
+            <button
               className={`nav-item ${activeTab === 'security' ? 'active' : ''}`}
               onClick={() => setActiveTab('security')}
             >
               <span className="nav-icon">🔒</span>
               Bảo mật
             </button>
-            <button 
+            <button
               className={`nav-item ${activeTab === 'addresses' ? 'active' : ''}`}
               onClick={() => setActiveTab('addresses')}
             >
               <span className="nav-icon">📍</span>
               Địa chỉ
             </button>
-            <button 
+            <button
               className={`nav-item ${activeTab === 'payments' ? 'active' : ''}`}
               onClick={() => setActiveTab('payments')}
             >
@@ -357,7 +441,7 @@ function AccountProfile({ onLogout }) {
             <div className="content-section">
               <div className="section-header">
                 <h2>Thông tin cá nhân</h2>
-                <button 
+                <button
                   onClick={() => setIsEditing(!isEditing)}
                   className="edit-btn"
                 >
@@ -367,20 +451,53 @@ function AccountProfile({ onLogout }) {
 
               <form onSubmit={handleSaveProfile} className="profile-form">
                 <div className="avatar-section">
-                  <div className="avatar-upload">
-                    {userInfo.avatar ? (
-                      <img src={userInfo.avatar} alt="Avatar" className="avatar-preview" />
-                    ) : (
-                      <div className="avatar-placeholder large">
-                        {userInfo.firstName[0]}{userInfo.lastName[0]}
+                  <AvatarUpload
+                    currentAvatar={avatarData?.preview || userInfo.avatar}
+                    onAvatarChange={handleAvatarChange}
+                    disabled={!isEditing || isUploadingAvatar}
+                  />
+
+                  {isEditing && avatarData && (
+                    <>
+                      <div className="avatar-size-info">
+                        <span>Kích thước: {(avatarData.size / 1024).toFixed(1)}KB</span>
+                        {avatarData.originalSize && avatarData.originalSize > avatarData.size && (
+                          <span className="size-reduction">
+                            {' '}(giảm {Math.round((1 - avatarData.size / avatarData.originalSize) * 100)}%)
+                          </span>
+                        )}
                       </div>
-                    )}
-                    {isEditing && (
-                      <button type="button" className="upload-btn">
-                        Thay đổi ảnh
-                      </button>
-                    )}
-                  </div>
+                      <div className="avatar-actions">
+                        <button
+                          type="button"
+                          className="save-avatar-btn"
+                          onClick={handleSaveAvatar}
+                          disabled={isUploadingAvatar}
+                        >
+                          {isUploadingAvatar ? 'Đang lưu...' : 'Lưu ảnh'}
+                        </button>
+                        <button
+                          type="button"
+                          className="cancel-avatar-btn"
+                          onClick={() => setAvatarData(null)}
+                          disabled={isUploadingAvatar}
+                        >
+                          Hủy
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {isEditing && userInfo.avatar && !avatarData && (
+                    <button
+                      type="button"
+                      className="remove-avatar-btn-text"
+                      onClick={handleRemoveAvatar}
+                      disabled={isUploadingAvatar}
+                    >
+                      {isUploadingAvatar ? 'Đang xóa...' : 'Xóa ảnh đại diện'}
+                    </button>
+                  )}
                 </div>
 
                 <div className="form-grid">
@@ -389,7 +506,7 @@ function AccountProfile({ onLogout }) {
                     <input
                       type="text"
                       value={userInfo.firstName}
-                      onChange={(e) => setUserInfo({...userInfo, firstName: e.target.value})}
+                      onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
                       disabled={!isEditing}
                       className="form-input"
                     />
@@ -399,7 +516,7 @@ function AccountProfile({ onLogout }) {
                     <input
                       type="text"
                       value={userInfo.lastName}
-                      onChange={(e) => setUserInfo({...userInfo, lastName: e.target.value})}
+                      onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
                       disabled={!isEditing}
                       className="form-input"
                     />
@@ -409,7 +526,7 @@ function AccountProfile({ onLogout }) {
                     <input
                       type="email"
                       value={userInfo.email}
-                      onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                      onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
                       disabled={!isEditing}
                       className="form-input"
                     />
@@ -419,7 +536,7 @@ function AccountProfile({ onLogout }) {
                     <input
                       type="text"
                       value={userInfo.username}
-                      onChange={(e) => setUserInfo({...userInfo, username: e.target.value})}
+                      onChange={(e) => setUserInfo({ ...userInfo, username: e.target.value })}
                       disabled={!isEditing}
                       className="form-input"
                     />
@@ -434,9 +551,9 @@ function AccountProfile({ onLogout }) {
                         // Only allow digits and limit to 10 characters
                         const cleanValue = value.replace(/\D/g, '').slice(0, 10);
                         const formattedValue = formatPhoneNumber(cleanValue);
-                        
-                        setUserInfo({...userInfo, phone: formattedValue});
-                        
+
+                        setUserInfo({ ...userInfo, phone: formattedValue });
+
                         // Validate phone number
                         if (cleanValue) {
                           const error = validatePhone(cleanValue);
@@ -451,7 +568,7 @@ function AccountProfile({ onLogout }) {
                       maxLength="12" // XXX XXX XXXX format
                     />
                     {phoneError && (
-                      <span className="error-text" style={{color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block'}}>
+                      <span className="error-text" style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
                         {phoneError}
                       </span>
                     )}
@@ -482,7 +599,7 @@ function AccountProfile({ onLogout }) {
                     <h3>Mật khẩu</h3>
                     <p>Thay đổi mật khẩu để bảo vệ tài khoản của bạn</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setShowPasswordForm(true)}
                     className="action-btn"
                   >
@@ -544,7 +661,7 @@ function AccountProfile({ onLogout }) {
             <div className="content-section">
               <div className="section-header">
                 <h2>Địa chỉ của tôi</h2>
-                <button 
+                <button
                   onClick={() => setShowAddressForm(true)}
                   className="add-btn"
                 >
@@ -567,7 +684,7 @@ function AccountProfile({ onLogout }) {
                     </div>
                     <div className="address-actions">
                       <button className="edit-btn small" onClick={() => handleEditAddress(address)}>Sửa</button>
-                      <button 
+                      <button
                         className="delete-btn small"
                         onClick={() => handleDeleteAddress(address.id)}
                       >
@@ -584,7 +701,7 @@ function AccountProfile({ onLogout }) {
                   <div className="modal">
                     <div className="modal-header">
                       <h3>Thêm địa chỉ mới</h3>
-                      <button 
+                      <button
                         onClick={() => setShowAddressForm(false)}
                         className="close-btn"
                       >
@@ -649,7 +766,7 @@ function AccountProfile({ onLogout }) {
             <div className="content-section">
               <div className="section-header">
                 <h2>Phương thức thanh toán</h2>
-                <button 
+                <button
                   onClick={() => setShowPaymentForm(true)}
                   className="add-btn"
                 >
@@ -670,7 +787,7 @@ function AccountProfile({ onLogout }) {
                     </div>
                     <div className="payment-actions">
                       <button className="edit-btn small" onClick={() => handleEditPayment(payment)}>Sửa</button>
-                      <button 
+                      <button
                         className="delete-btn small"
                         onClick={() => handleDeletePayment(payment.id)}
                       >
@@ -687,7 +804,7 @@ function AccountProfile({ onLogout }) {
                   <div className="modal">
                     <div className="modal-header">
                       <h3>Thêm thẻ thanh toán</h3>
-                      <button 
+                      <button
                         onClick={() => setShowPaymentForm(false)}
                         className="close-btn"
                       >

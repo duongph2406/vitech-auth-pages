@@ -586,3 +586,232 @@
     align-self: flex-end;
   }
 }
+/* Avatar
+ Section Styles */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.avatar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.save-avatar-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-avatar-btn:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.save-avatar-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-avatar-btn {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-avatar-btn:hover:not(:disabled) {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.cancel-avatar-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.remove-avatar-btn-text {
+  background: none;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-avatar-btn-text:hover:not(:disabled) {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.remove-avatar-btn-text:disabled {
+  color: #9ca3af;
+  border-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive avatar section */
+@media (max-width: 768px) {
+  .avatar-section {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .avatar-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .save-avatar-btn,
+  .cancel-avatar-btn,
+  .remove-avatar-btn-text {
+    width: 100%;
+    justify-content: center;
+  }
+}
+/* Av
+atar Section Styles */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.remove-avatar-btn-text {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 12px;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+}
+
+.remove-avatar-btn-text:hover:not(:disabled) {
+  color: #c82333;
+}
+
+.remove-avatar-btn-text:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Avatar Upload Enhancements */
+.avatar-upload-container .avatar-info {
+  margin-top: 16px;
+}
+
+.avatar-upload-container .avatar-requirements {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  color: #856404;
+  line-height: 1.4;
+}
+
+/* Avatar Processing Feedback */
+.avatar-processing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1976d2;
+}
+
+.avatar-processing .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #bbdefb;
+  border-top: 2px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Avatar Size Info */
+.avatar-size-info {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.size-reduction {
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* Responsive Avatar Section */
+@media (max-width: 768px) {
+  .avatar-section {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .avatar-upload-container .avatar-requirements {
+    font-size: 11px;
+    padding: 8px;
+  }
+  
+  .remove-avatar-btn-text {
+    font-size: 13px;
+  }
+}
+
+/* Error state for form inputs */
+.form-input.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
