@@ -1,26 +1,54 @@
 // Application Constants
-export const APP_NAME = 'ViTech';
-export const COMPANY_NAME = 'ViTech Group Company';
-export const COPYRIGHT_YEARS = '2019 - 2021';
+export const APP_CONFIG = {
+  NAME: 'ViTech Group',
+  COMPANY: 'ViTech Group Company',
+  COPYRIGHT_YEARS: '2019 - 2025',
+  VERSION: '1.0.0',
+  ENVIRONMENT: process.env.NODE_ENV || 'development'
+};
 
 // Local Storage Keys
 export const STORAGE_KEYS = {
   USERS: 'vitech_users',
-  CURRENT_USER: 'vitech_current_user'
+  CURRENT_USER: 'vitech_current_user',
+  THEME: 'vitech_theme',
+  SETTINGS: 'vitech_settings'
 };
 
-// Form Validation
-export const VALIDATION = {
-  PASSWORD_MIN_LENGTH: 8,
-  USERNAME_MIN_LENGTH: 3,
-  USERNAME_MAX_LENGTH: 20
+// Form Validation Rules
+export const VALIDATION_RULES = {
+  PASSWORD: {
+    MIN_LENGTH: 8,
+    MAX_LENGTH: 128,
+    PATTERN: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/
+  },
+  USERNAME: {
+    MIN_LENGTH: 3,
+    MAX_LENGTH: 20,
+    PATTERN: /^[a-zA-Z0-9_]+$/
+  },
+  EMAIL: {
+    PATTERN: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  },
+  PHONE: {
+    PATTERN: /^[0-9+\-\s()]+$/
+  }
 };
 
-// UI Constants
+// Application Pages
 export const PAGES = {
   LOGIN: 'login',
-  SIGNUP: 'signup',
-  PROFILE: 'profile'
+  SIGNUP: 'signup', 
+  PROFILE: 'profile',
+  DASHBOARD: 'dashboard',
+  SETTINGS: 'settings'
+};
+
+// User Roles
+export const USER_ROLES = {
+  ADMIN: 'admin',
+  USER: 'user',
+  GUEST: 'guest'
 };
 
 // Messages

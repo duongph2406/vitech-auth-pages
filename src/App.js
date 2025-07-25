@@ -2,6 +2,7 @@ import React from 'react';
 import './styles/App.css';
 import { AuthForm, AccountProfile } from './components';
 import { AppLayout } from './components/Layout';
+import { PerformanceMonitor } from './components/Performance';
 import { AppProviders } from './context';
 import { useApp } from './hooks/useApp';
 import { PAGES } from './constants';
@@ -36,6 +37,7 @@ function AppContent() {
           isLoading={isLoading}
         />
       )}
+      <PerformanceMonitor />
     </AppLayout>
   );
 }

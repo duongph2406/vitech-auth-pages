@@ -1,51 +1,79 @@
 import dataService from './dataService';
+import { validateEmail, validatePassword, validateUsername } from '../utils/validation';
+import { errorHandler } from '../utils/errorHandler';
+import { MESSAGES } from '../constants';
 
 class AuthService {
   // Login user
   login(username, password) {
-    const normalizedUsername = username.trim().toLowerCase();
-    const user = dataService.getUserByUsername(normalizedUsername);
-    if (user && user.password === password) {
-      dataService.setCurrentUser(user.id);
-      return { success: true, user };
+    try {
+      // Validate inputs
+      const usernameError = validateUsername(username);
+      if (usernameError) {
+        return { success: false, message: usernameError };
+      }
+
+      if (!password) {
+        return { success: false, message: 'Mật khẩu là bắt buộc' };
+      }
+
+      const normalizedUsername = username.trim().toLowerCase();
+      const user = dataService.getUserByUsername(normalizedUsername);
+      
+      if (user && user.password === password) {
+        dataService.setCurrentUser(user.id);
+        return { success: true, user };
+      }
+      
+      return { success: false, message: MESSAGES.LOGIN_ERROR };
+    } catch (error) {
+      const handledError = errorHandler.handleError(error);
+      return { success: false, message: handledError.message };
     }
-    return { success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng' };
   }
 
   // Register new user
   register(userData) {
-    const normalizedUsername = userData.username.trim().toLowerCase();
-    
-    // Prevent admin account creation
-    if (normalizedUsername === 'admin') {
-      return { success: false, message: 'Tên đăng nhập không được phép' };
-    }
-    
-    // Check if username already exists
-    if (dataService.getUserByUsername(normalizedUsername)) {
-      return { success: false, message: 'Tên đăng nhập đã tồn tại' };
-    }
+    try {
+      // Validate all fields
+      const usernameError = validateUsername(userData.username);
+      if (usernameError) {
+        return { success: false, message: usernameError };
+      }
 
-    // Check if email already exists
-    if (dataService.getUserByEmail(userData.email)) {
-      return { success: false, message: 'Email đã được sử dụng' };
-    }
+      const emailError = validateEmail(userData.email);
+      if (emailError) {
+        return { success: false, message: emailError };
+      }
 
-    // Validate password
-    if (!this.validatePassword(userData.password)) {
-      return { 
-        success: false, 
-        message: 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt' 
-      };
-    }
+      const passwordError = validatePassword(userData.password);
+      if (passwordError) {
+        return { success: false, message: passwordError };
+      }
 
-    // Create new user
-    const newUser = dataService.createUser({
-      ...userData,
-      username: normalizedUsername
-    });
-    dataService.setCurrentUser(newUser.id);
-    return { success: true, user: newUser };
+      const normalizedUsername = userData.username.trim().toLowerCase();
+      
+      // Check if username already exists
+      if (dataService.getUserByUsername(normalizedUsername)) {
+        return { success: false, message: MESSAGES.USERNAME_EXISTS };
+      }
+
+      // Check if email already exists
+      if (dataService.getUserByEmail(userData.email)) {
+        return { success: false, message: MESSAGES.EMAIL_EXISTS };
+      }
+
+      // Create new user
+      const newUser = dataService.createUser({
+        ...userData,
+        username: normalizedUsername
+      });
+      dataService.setCurrentUser(newUser.id);
+      return { success: true, user: newUser };
+    } catch (error) {
+      const handledError = errorHandler.handleError(error);
+      return { success: false, message: handledError.message };
+    }
   }
 
   // Logout user
@@ -113,24 +141,17 @@ class AuthService {
     return { success: true, user: updatedUser };
   }
 
-  // Password validation
+  // Validation methods (delegated to validation utils)
   validatePassword(password) {
-    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
+    return !validatePassword(password);
   }
 
-  // Email validation
   validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return !validateEmail(email);
   }
 
-  // Username validation
   validateUsername(username) {
-    // 3-20 characters, alphanumeric and underscore only
-    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-    return usernameRegex.test(username);
+    return !validateUsername(username);
   }
 }
 

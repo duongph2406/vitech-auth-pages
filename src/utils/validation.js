@@ -1,46 +1,60 @@
-import { VALIDATION, MESSAGES } from '../constants';
+import { VALIDATION_RULES, MESSAGES } from '../constants';
+import { errorHandler } from './errorHandler';
 
-// Email validation regex
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Validation patterns from constants
+const { EMAIL, PASSWORD, USERNAME, PHONE } = VALIDATION_RULES;
 
-// Password validation regex (at least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-// Username validation regex (3-20 chars, alphanumeric and underscore only)
-const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
+/**
+ * Enhanced validation functions with better error handling
+ */
 
 export const validateEmail = (email) => {
-  if (!email) return 'Email is required';
-  if (!EMAIL_REGEX.test(email)) return 'Please enter a valid email address';
-  return '';
+  try {
+    if (!email) return 'Email là bắt buộc';
+    if (!EMAIL.PATTERN.test(email)) return 'Vui lòng nhập email hợp lệ';
+    return '';
+  } catch (error) {
+    throw errorHandler.createValidationError('Lỗi xác thực email');
+  }
 };
 
 export const validatePassword = (password) => {
-  if (!password) return 'Password is required';
-  if (password.length < VALIDATION.PASSWORD_MIN_LENGTH) {
-    return `Password must be at least ${VALIDATION.PASSWORD_MIN_LENGTH} characters`;
+  try {
+    if (!password) return 'Mật khẩu là bắt buộc';
+    if (password.length < PASSWORD.MIN_LENGTH) {
+      return `Mật khẩu phải có ít nhất ${PASSWORD.MIN_LENGTH} ký tự`;
+    }
+    if (password.length > PASSWORD.MAX_LENGTH) {
+      return `Mật khẩu không được vượt quá ${PASSWORD.MAX_LENGTH} ký tự`;
+    }
+    if (!PASSWORD.PATTERN.test(password)) {
+      return MESSAGES.PASSWORD_WEAK;
+    }
+    return '';
+  } catch (error) {
+    throw errorHandler.createValidationError('Lỗi xác thực mật khẩu');
   }
-  if (!PASSWORD_REGEX.test(password)) {
-    return MESSAGES.PASSWORD_WEAK;
-  }
-  return '';
 };
 
 export const validateUsername = (username) => {
-  if (!username) return 'Username is required';
-  if (username.length < VALIDATION.USERNAME_MIN_LENGTH) {
-    return `Username must be at least ${VALIDATION.USERNAME_MIN_LENGTH} characters`;
+  try {
+    if (!username) return 'Tên đăng nhập là bắt buộc';
+    if (username.length < USERNAME.MIN_LENGTH) {
+      return `Tên đăng nhập phải có ít nhất ${USERNAME.MIN_LENGTH} ký tự`;
+    }
+    if (username.length > USERNAME.MAX_LENGTH) {
+      return `Tên đăng nhập không được vượt quá ${USERNAME.MAX_LENGTH} ký tự`;
+    }
+    if (!USERNAME.PATTERN.test(username)) {
+      return 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
+    }
+    if (username.toLowerCase() === 'admin') {
+      return MESSAGES.ADMIN_BLOCKED;
+    }
+    return '';
+  } catch (error) {
+    throw errorHandler.createValidationError('Lỗi xác thực tên đăng nhập');
   }
-  if (username.length > VALIDATION.USERNAME_MAX_LENGTH) {
-    return `Username must be no more than ${VALIDATION.USERNAME_MAX_LENGTH} characters`;
-  }
-  if (!USERNAME_REGEX.test(username)) {
-    return 'Username can only contain letters, numbers, and underscores';
-  }
-  if (username.toLowerCase() === 'admin') {
-    return MESSAGES.ADMIN_BLOCKED;
-  }
-  return '';
 };
 
 export const validateConfirmPassword = (password, confirmPassword) => {
@@ -68,13 +82,19 @@ export const validateName = (name, fieldName) => {
 };
 
 export const validatePhone = (phone) => {
-  if (!phone) return ''; // Phone is optional
-  
-  const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,15}$/;
-  if (!phoneRegex.test(phone)) {
-    return 'Please enter a valid phone number';
+  try {
+    if (!phone) return ''; // Phone is optional
+    
+    if (!PHONE.PATTERN.test(phone)) {
+      return 'Vui lòng nhập số điện thoại hợp lệ';
+    }
+    if (phone.length < 10 || phone.length > 15) {
+      return 'Số điện thoại phải có từ 10-15 ký tự';
+    }
+    return '';
+  } catch (error) {
+    throw errorHandler.createValidationError('Lỗi xác thực số điện thoại');
   }
-  return '';
 };
 
 // Form validation schemas
