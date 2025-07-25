@@ -1,0 +1,46 @@
+title: ViTech Group Authentication System
+description: A modern React-based authentication system with clean architecture and professional UI
+theme: jekyll-theme-primer
+
+# Site settings
+url: "https://vitechgroup.github.io"
+baseurl: "/vitech-auth-pages"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Plugins
+plugins:
+  - jekyll-github-metadata
+  - jekyll-seo-tag
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: Installation
+    url: /installation
+  - title: API Reference
+    url: /api
+  - title: Components
+    url: /components
+  - title: Development
+    url: /development
+
+# GitHub
+github:
+  repository_name: vitech-auth-pages
+  owner_name: vitechgroup
+
+# SEO
+author: ViTech Group
+twitter:
+  username: vitechgroup
+
+# Exclude files
+exclude:
+  - node_modules
+  - package.json
+  - package-lock.json
+  - README.md
