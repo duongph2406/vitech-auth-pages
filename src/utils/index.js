@@ -1,5 +1,4 @@
 export * from './validation';
-export * from './performance';
 export * from './errorHandler';
 export * from './formatters';
 export * from './fileValidation';

@@ -16,7 +16,7 @@ A modern, scalable React-based authentication system with clean architecture, pr
 - **Modular Architecture** - Clean separation of concerns
 - **Custom Hooks** - Reusable logic with useAuth, useForm, useAsync
 - **Error Boundaries** - Graceful error handling and recovery
-- **Performance Monitoring** - Built-in performance tracking (dev mode)
+
 - **Type Safety** - TypeScript-like structure with proper validation
 - **API Ready** - Prepared for backend integration with API client
 
@@ -54,12 +54,12 @@ src/
 ├── services/            # Business logic services
 │   ├── authService.js   # Authentication logic
 │   ├── dataService.js   # Data management
-│   ├── performanceService.js # Performance monitoring
+
 │   ├── notificationService.js # Notifications
 │   └── index.js
 ├── utils/               # Utility functions
 │   ├── validation.js    # Form validation
-│   ├── performance.js   # Performance utilities
+
 │   ├── clearAdminData.js
 │   └── index.js
 ├── config/              # Configuration

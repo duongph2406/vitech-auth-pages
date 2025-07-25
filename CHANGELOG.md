@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2025-01-25
+
+### 🗑️ Performance Monitoring Removal
+
+#### Removed
+- **Performance Monitor Component** - Removed development performance tracking
+- **Performance Service** - Removed performance utilities and monitoring
+- **Performance Utils** - Cleaned up performance-related code
+- **Environment Flags** - Removed performance monitoring feature flags
+
+#### Reasons
+- Simplified codebase by removing development-only features
+- Reduced bundle size and complexity
+- Focus on core functionality rather than monitoring tools
+- Performance can be monitored using browser dev tools
+
+---
+
 ## [2.1.0] - 2025-01-25
 
 ### 🚀 Complete Architecture Refactor
