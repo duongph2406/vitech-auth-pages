@@ -1,0 +1,63 @@
+/* ProfileInfo Component Styles */
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.profile-info__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-info__header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+.profile-info__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.profile-info__avatar-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-6) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.profile-info__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.profile-info__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .profile-info__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+  
+  .profile-info__actions {
+    justify-content: stretch;
+  }
+  
+  .profile-info__actions button {
+    width: 100%;
+  }
+}
