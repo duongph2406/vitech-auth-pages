@@ -1,14 +1,47 @@
 import dataService from './dataService';
-import { validateEmail, validatePassword, validateUsername } from '../lib/validation';
-import errorHandler from '../lib/errorHandler';
-import { MESSAGES } from '../lib/constants';
+import { MESSAGES } from '../constants';
 
 class AuthService {
+  // Simple validation helpers
+  validateUsername(username) {
+    if (!username || username.trim().length < 3) {
+      return 'Tên đăng nhập phải có ít nhất 3 ký tự';
+    }
+    if (username.trim().length > 20) {
+      return 'Tên đăng nhập không được vượt quá 20 ký tự';
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username.trim())) {
+      return 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
+    }
+    const reserved = ['admin', 'administrator', 'root', 'system'];
+    if (reserved.includes(username.trim().toLowerCase())) {
+      return 'Tên đăng nhập không được phép';
+    }
+    return null;
+  }
+
+  validateEmail(email) {
+    if (!email) return 'Email là bắt buộc';
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return 'Định dạng email không hợp lệ';
+    }
+    return null;
+  }
+
+  validatePassword(password) {
+    if (!password) return 'Mật khẩu là bắt buộc';
+    if (password.length < 8) {
+      return 'Mật khẩu phải có ít nhất 8 ký tự';
+    }
+    return null;
+  }
+
   // Login user
   login(username, password) {
     try {
       // Validate inputs
-      const usernameError = validateUsername(username);
+      const usernameError = this.validateUsername(username);
       if (usernameError) {
         return { success: false, message: usernameError };
       }
@@ -25,10 +58,10 @@ class AuthService {
         return { success: true, user };
       }
       
-      return { success: false, message: MESSAGES.LOGIN_ERROR };
+      return { success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng' };
     } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      return { success: false, message: handledError.message };
+      console.error('Login error:', error);
+      return { success: false, message: 'Đã xảy ra lỗi khi đăng nhập' };
     }
   }
 
@@ -36,17 +69,17 @@ class AuthService {
   register(userData) {
     try {
       // Validate all fields
-      const usernameError = validateUsername(userData.username);
+      const usernameError = this.validateUsername(userData.username);
       if (usernameError) {
         return { success: false, message: usernameError };
       }
 
-      const emailError = validateEmail(userData.email);
+      const emailError = this.validateEmail(userData.email);
       if (emailError) {
         return { success: false, message: emailError };
       }
 
-      const passwordError = validatePassword(userData.password);
+      const passwordError = this.validatePassword(userData.password);
       if (passwordError) {
         return { success: false, message: passwordError };
       }
@@ -55,12 +88,12 @@ class AuthService {
       
       // Check if username already exists
       if (dataService.getUserByUsername(normalizedUsername)) {
-        return { success: false, message: MESSAGES.USERNAME_EXISTS };
+        return { success: false, message: 'Tên đăng nhập đã tồn tại' };
       }
 
       // Check if email already exists
       if (dataService.getUserByEmail(userData.email)) {
-        return { success: false, message: MESSAGES.EMAIL_EXISTS };
+        return { success: false, message: 'Email đã được sử dụng' };
       }
 
       // Create new user
@@ -71,8 +104,8 @@ class AuthService {
       dataService.setCurrentUser(newUser.id);
       return { success: true, user: newUser };
     } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      return { success: false, message: handledError.message };
+      console.error('Register error:', error);
+      return { success: false, message: 'Đã xảy ra lỗi khi đăng ký' };
     }
   }
 
@@ -103,11 +136,9 @@ class AuthService {
       return { success: false, message: 'Mật khẩu hiện tại không đúng' };
     }
 
-    if (!this.validatePassword(newPassword)) {
-      return { 
-        success: false, 
-        message: 'Mật khẩu mới phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt' 
-      };
+    const passwordError = this.validatePassword(newPassword);
+    if (passwordError) {
+      return { success: false, message: passwordError };
     }
 
     const updatedUser = dataService.updateUser(user.id, { password: newPassword });
@@ -141,44 +172,7 @@ class AuthService {
     return { success: true, user: updatedUser };
   }
 
-  // Avatar management
-  updateAvatar(avatarData) {
-    try {
-      const user = dataService.getCurrentUser();
-      if (!user) {
-        return { success: false, message: 'Người dùng chưa đăng nhập' };
-      }
 
-      const updatedUser = dataService.updateUserAvatar(user.id, avatarData);
-      if (updatedUser) {
-        return { success: true, user: updatedUser };
-      } else {
-        return { success: false, message: 'Không thể cập nhật avatar' };
-      }
-    } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      return { success: false, message: handledError.message };
-    }
-  }
-
-  removeAvatar() {
-    try {
-      const user = dataService.getCurrentUser();
-      if (!user) {
-        return { success: false, message: 'Người dùng chưa đăng nhập' };
-      }
-
-      const updatedUser = dataService.removeUserAvatar(user.id);
-      if (updatedUser) {
-        return { success: true, user: updatedUser };
-      } else {
-        return { success: false, message: 'Không thể xóa avatar' };
-      }
-    } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      return { success: false, message: handledError.message };
-    }
-  }
 
   // Avatar management
   updateAvatar(avatarDataUrl) {
@@ -191,8 +185,8 @@ class AuthService {
       const updatedUser = dataService.updateUser(user.id, { avatar: avatarDataUrl });
       return { success: true, user: updatedUser };
     } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      return { success: false, message: handledError.message };
+      console.error('Update avatar error:', error);
+      return { success: false, message: 'Không thể cập nhật avatar' };
     }
   }
 
@@ -206,22 +200,9 @@ class AuthService {
       const updatedUser = dataService.updateUser(user.id, { avatar: null });
       return { success: true, user: updatedUser };
     } catch (error) {
-      const handledError = errorHandler.handleError(error);
-      return { success: false, message: handledError.message };
+      console.error('Remove avatar error:', error);
+      return { success: false, message: 'Không thể xóa avatar' };
     }
-  }
-
-  // Validation methods (delegated to validation utils)
-  validatePassword(password) {
-    return !validatePassword(password);
-  }
-
-  validateEmail(email) {
-    return !validateEmail(email);
-  }
-
-  validateUsername(username) {
-    return !validateUsername(username);
   }
 }
 

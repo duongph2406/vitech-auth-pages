@@ -16,8 +16,8 @@ class ErrorBoundary extends React.Component {
     // Log error details
     console.error('Error caught by boundary:', error, errorInfo);
     this.setState({
-      error: error,
-      errorInfo: errorInfo
+      error: error || null,
+      errorInfo: errorInfo || null
     });
   }
 
@@ -53,7 +53,7 @@ class ErrorBoundary extends React.Component {
                 <pre className="error-stack">
                   {this.state.error && this.state.error.toString()}
                   <br />
-                  {this.state.errorInfo.componentStack}
+                  {this.state.errorInfo && this.state.errorInfo.componentStack}
                 </pre>
               </details>
             )}

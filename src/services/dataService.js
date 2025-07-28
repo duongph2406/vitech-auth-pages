@@ -1,5 +1,8 @@
-import { STORAGE_KEYS } from '../lib/constants';
-import storage from '../lib/storage';
+// Storage keys
+const STORAGE_KEYS = {
+  USERS: 'vitech_users',
+  CURRENT_USER: 'vitech_current_user'
+};
 
 // Local Storage Data Service
 class DataService {
