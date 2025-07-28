@@ -121,7 +121,7 @@ function AuthForm({
                           id="firstName"
                           type="text"
                           name="firstName"
-                          placeholder="John"
+                          placeholder="Nguyen"
                           className="form-input"
                           value={formData.firstName || ''}
                           onChange={handleInputChange}
@@ -136,7 +136,7 @@ function AuthForm({
                           id="lastName"
                           type="text"
                           name="lastName"
-                          placeholder="Doe"
+                          placeholder="Van A"
                           className="form-input"
                           value={formData.lastName || ''}
                           onChange={handleInputChange}
@@ -153,7 +153,7 @@ function AuthForm({
                         id="email"
                         type="email"
                         name="email"
-                        placeholder="john.doe@example.com"
+                        placeholder="nguyenvana@example.com"
                         className="form-input"
                         value={formData.email || ''}
                         onChange={handleInputChange}
@@ -171,7 +171,7 @@ function AuthForm({
                     id="username"
                     type="text"
                     name="username"
-                    placeholder={isSignUp ? "johndoe" : "Enter your username"}
+                    placeholder={isSignUp ? "nguyenvana" : "Enter your username"}
                     className="form-input"
                     value={formData.username || ''}
                     onChange={handleInputChange}
@@ -188,7 +188,7 @@ function AuthForm({
                     id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder={isSignUp ? "••••••••" : "Enter your password"}
+                    placeholder={isSignUp ? "Enter your password" : "Enter your password"}
                     className="form-input"
                     value={formData.password || ''}
                     onChange={handleInputChange}
@@ -215,7 +215,7 @@ function AuthForm({
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
-                      placeholder="••••••••"
+                      placeholder="Confirm Password"
                       className="form-input"
                       value={formData.confirmPassword || ''}
                       onChange={handleInputChange}

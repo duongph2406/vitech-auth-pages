@@ -876,7 +876,7 @@ function AccountProfile({ onLogout }) {
                           name="cardName"
                           required
                           className="form-input"
-                          placeholder="JOHN DOE"
+                          placeholder="Nguyen Van A"
                         />
                       </div>
                       <div className="modal-actions">
